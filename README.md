@@ -75,9 +75,10 @@ npx eve remote connect --url https://<your-deployment>.vercel.app
 
 ### Who can call the deployed agent?
 
-`agent/channels/eve.ts` ships with the scaffold's safe default: the eve CLI and your team's other Vercel deployments can reach it (`vercelOidc()`), localhost is open in development (`localDev()`), and anonymous browser traffic in production gets a 401 (`placeholderAuth()`). To open it up:
+`agent/channels/eve.ts` is configured as a **public demo**: the `none()` policy lets anyone with the URL start a session, so they spend your AI Gateway budget. The eve CLI and your team's other deployments still get an identity through `vercelOidc()`, and localhost is open in development. CORS is enabled so a browser front-end on another origin can call it.
 
-- **Public demo:** replace `placeholderAuth()` with `none()` from `eve/channels/auth`. Anyone with the URL can then run sessions on your model budget.
+To lock it down, replace `none()` with:
+
 - **Web chat for your team:** run `npx eve add channel/web`, choose Next.js and "Sign in with Vercel". That adds a chat UI that only members of your Vercel team can sign in to.
 - **Your own auth:** any custom verifier works; see the [auth guide](https://eve.dev/docs/guides/auth-and-route-protection).
 
