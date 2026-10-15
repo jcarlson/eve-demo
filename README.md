@@ -21,9 +21,15 @@ eve agents are a directory of files. Everything lives under `agent/`:
 | `agent/tools/whats_on.ts` | What's happening now or at a given time, and what's next, in Pacific time. |
 | `agent/tools/get_event_info.ts` | Date, venue, tracks, start and end times. |
 | `agent/channels/eve.ts` | The HTTP channel and its auth policy. |
+| `apps/web/` | Next.js Web Chat UI. |
+| `vercel.ts` | Deploys the web app and the agent as two services on one Vercel project. |
 | `evals/` | Graded conversations you can run with `npm run eval`. |
 
 The schedule was captured from <https://vercel.com/ship/sf/schedule> on the day of the event. To update it, edit `agent/lib/schedule.ts`.
+
+## Web chat
+
+`apps/web/` is a Next.js chat UI (eve's Web Chat channel, built on AI Elements). On Vercel it deploys as a second service next to the agent; `vercel.ts` wires the two together so the page at `/` talks to the agent at `/eve/v1/*` on the same origin. It streams answers, shows tool calls, and keeps a shareable URL per session under `/s/<sessionId>`.
 
 ## Run it locally
 
@@ -31,7 +37,8 @@ Requires Node.js 24 or newer.
 
 ```bash
 npm install
-npm run dev
+npm run dev        # agent only: terminal chat UI
+npm run dev:all    # agent + web chat together via `vercel dev` (needs the Vercel CLI)
 ```
 
 `eve dev` opens a terminal chat UI. The first time, it asks you to connect a model: a Vercel account (AI Gateway), or an Anthropic or AI Gateway API key. Then just ask a question.
@@ -48,16 +55,17 @@ curl -X POST http://127.0.0.1:3000/eve/v1/session \
 curl http://127.0.0.1:3000/eve/v1/session/<sessionId>/stream
 ```
 
-Typecheck and evals:
+Checks:
 
 ```bash
-npm run typecheck
+npm run typecheck   # the agent
+npm run build:web   # the Next.js app
 npm run eval        # needs a model credential; boots a local server and grades evals/*.eval.ts
 ```
 
 ## Deploy to Vercel
 
-The project deploys as a standard eve app: Vercel provisions the function runtime, Vercel Workflow for durable sessions, and Vercel Sandbox. Model calls route through AI Gateway using the project's OIDC token, so no provider API key is required.
+The project deploys as an eve app plus a Next.js web service, both described by `vercel.ts`. Vercel provisions the function runtime, Vercel Workflow for durable sessions, and Vercel Sandbox. Model calls route through AI Gateway using the project's OIDC token, so no provider API key is required.
 
 Either connect this repository to a Vercel project (every push deploys), or from the project root:
 
