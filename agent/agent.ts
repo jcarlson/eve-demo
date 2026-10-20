@@ -3,15 +3,10 @@ import { defineAgent } from "eve";
 export default defineAgent({
   // Routed through Vercel AI Gateway. On Vercel the deployment authenticates
   // with project OIDC; locally, `eve link` or `/login` in the TUI provides a credential.
-  model: "anthropic/claude-sonnet-5.5",
+  //
+  // This team runs on AI Gateway's free credit, which only covers a subset of
+  // the catalog. GPT-5.2 is flagged "Free AI Gateway Credit: Yes" there;
+  // Claude Sonnet 5.5 is not and returns a 403 RestrictedModelsError.
+  model: "openai/gpt-5.2",
   reasoning: "low",
-  modelOptions: {
-    providerOptions: {
-      // Pin the gateway to Anthropic's own API. Since Oct 20 the gateway has
-      // been routing this model to "Claude Platform on AWS" first, and that
-      // path rejects free-credit teams with a 403 RestrictedModelsError. The
-      // direct Anthropic path served every call on Oct 15.
-      gateway: { order: ["anthropic"] },
-    },
-  },
 });
