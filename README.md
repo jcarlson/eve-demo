@@ -13,7 +13,7 @@ eve agents are a directory of files. Everything lives under `agent/`:
 
 | Path | Purpose |
 | --- | --- |
-| `agent/agent.ts` | Model config (`anthropic/claude-sonnet-5.5` via Vercel AI Gateway). |
+| `agent/agent.ts` | Model config (`openai/gpt-5.2` via Vercel AI Gateway; a free-tier-eligible model). |
 | `agent/instructions.md` | The always-on system prompt: persona, tool-use rules, style. |
 | `agent/lib/schedule.ts` | The schedule data (all three tracks) plus time and search helpers. |
 | `agent/tools/get_schedule.ts` | List the schedule, optionally for one track. |
